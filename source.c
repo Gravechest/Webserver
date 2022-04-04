@@ -2,11 +2,10 @@
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
-
 WSADATA data;
 SOCKET sock;
 unsigned char clientC;
-SOCKET client[128];
+SOCKET client;
 SOCKADDR_IN adres;
 SOCKADDR_IN adres2;
 char rbuf[9999];
@@ -25,14 +24,6 @@ char *loadHtml(char *name){
 	return file;
 }
 
-void sendHtml(unsigned char n){
-	recv(client[clientC-1],rbuf,sizeof(rbuf),0);
-	printf("%s\n",rbuf);
-	send(client[clientC-1],htmlFile,strlen(htmlFile),0);
-	closesocket(client[clientC-1]);
-	clientC--;
-}
-
 int main() {
 	htmlFile = loadHtml("source.html");
 	WORD ver = MAKEWORD(2, 2);
@@ -44,8 +35,9 @@ int main() {
 	bind(sock,(SOCKADDR*)&adres,sizeof(adres));
 	for(;;){
 		listen(sock,SOMAXCONN);
-		client[clientC] = accept(sock,0,0);
-		CreateThread(0,0,sendHtml,&clientC,0,0);
-		clientC++;
+		client = accept(sock,0,0);
+		recv(client,rbuf,sizeof(rbuf),0);
+		send(client,htmlFile,strlen(htmlFile),0);
+		closesocket(client);
 	}
 }
