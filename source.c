@@ -1,15 +1,12 @@
 #include <stdio.h>
 #include <winsock2.h>
-#include <ws2tcpip.h>
 
 WSADATA data;
 SOCKET sock;
 unsigned char clientC;
 SOCKET client;
 SOCKADDR_IN adres;
-SOCKADDR_IN adres2;
 char rbuf[9999];
-char command[40];
 char *htmlFile;
 
 char *loadHtml(char *name){
